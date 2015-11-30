@@ -5,7 +5,7 @@ export OUTPUT_FILENAME
 MAKEFILE_NAME := $(MAKEFILE_LIST)
 MAKEFILE_DIR := $(dir $(MAKEFILE_NAME) ) 
 
-TEMPLATE_PATH = ./nrf52_sdk/components/toolchain/gcc
+TEMPLATE_PATH = nrf52_sdk/components/toolchain/gcc
 ifeq ($(OS),Windows_NT)
 include $(TEMPLATE_PATH)/Makefile.windows
 else
@@ -35,67 +35,121 @@ SIZE            := '$(GNU_INSTALL_ROOT)/bin/$(GNU_PREFIX)-size'
 #function for removing duplicates in a list
 remduplicates = $(strip $(if $1,$(firstword $1) $(call remduplicates,$(filter-out $(firstword $1),$1))))
 
+# Espruino wrapper sources
+ESPRUINO_WRAPPER_SOURCES += \
+espruino/src/jswrap_array.c \
+espruino/src/jswrap_arraybuffer.c \
+espruino/src/jswrap_date.c \
+espruino/src/jswrap_error.c \
+espruino/src/jswrap_espruino.c \
+espruino/src/jswrap_flash.c \
+espruino/src/jswrap_functions.c \
+espruino/src/jswrap_interactive.c \
+espruino/src/jswrap_io.c \
+espruino/src/jswrap_json.c \
+espruino/src/jswrap_modules.c \
+espruino/src/jswrap_number.c \
+espruino/src/jswrap_object.c \
+espruino/src/jswrap_onewire.c \
+espruino/src/jswrap_pin.c \
+espruino/src/jswrap_pipe.c \
+espruino/src/jswrap_process.c \
+espruino/src/jswrap_serial.c \
+espruino/src/jswrap_spi_i2c.c \
+espruino/src/jswrap_stream.c \
+espruino/src/jswrap_string.c \
+espruino/src/jswrap_waveform.c
+
+# Espruino sources
+ESPRUINO_SOURCES += \
+espruino/src/jslex.c \
+espruino/src/jsvar.c \
+espruino/src/jsvariterator.c \
+espruino/src/jsutils.c \
+espruino/src/jsnative.c \
+espruino/src/jsparse.c \
+espruino/src/jspin.c \
+espruino/src/jsinteractive.c \
+espruino/src/jsdevices.c \
+espruino/src/jstimer.c \
+espruino/src/jsspi.c \
+espruino/gen/jswrapper.c \
+
+# NRF52 sdk sources
+NRF_SOURCES += \
+nrf52_sdk/components/libraries/button/app_button.c \
+nrf52_sdk/components/libraries/util/app_error.c \
+nrf52_sdk/components/libraries/util/nrf_assert.c \
+nrf52_sdk/components/libraries/fifo/app_fifo.c \
+nrf52_sdk/components/libraries/scheduler/app_scheduler.c \
+nrf52_sdk/components/libraries/timer/app_timer.c \
+nrf52_sdk/components/libraries/timer/app_timer_appsh.c \
+nrf52_sdk/components/libraries/trace/app_trace.c \
+nrf52_sdk/components/libraries/uart/retarget.c \
+nrf52_sdk/components/libraries/uart/app_uart_fifo.c \
+nrf52_sdk/components/drivers_nrf/delay/nrf_delay.c \
+nrf52_sdk/components/drivers_nrf/common/nrf_drv_common.c \
+nrf52_sdk/components/drivers_nrf/gpiote/nrf_drv_gpiote.c \
+nrf52_sdk/components/drivers_nrf/uart/nrf_drv_uart.c \
+nrf52_sdk/components/drivers_nrf/pstorage/pstorage.c \
+nrf52_sdk/components/drivers_nrf/spi_master/nrf_drv_spi.c \
+nrf52_sdk/components/ble/ble_advertising/ble_advertising.c \
+nrf52_sdk/components/ble/ble_db_discovery/ble_db_discovery.c \
+nrf52_sdk/components/ble/common/ble_advdata.c \
+nrf52_sdk/components/ble/common/ble_conn_params.c \
+nrf52_sdk/components/ble/common/ble_srv_common.c \
+nrf52_sdk/components/ble/device_manager/device_manager_peripheral.c \
+nrf52_sdk/components/softdevice/common/softdevice_handler/softdevice_handler.c \
+nrf52_sdk/components/toolchain/system_nrf52.c \
+
+# pixwatch sources
+SOURCES += \
+src/main.c \
+src/ble_pixwatch_c.c \
+src/display.c \
+
 #source common to all targets
 C_SOURCE_FILES += \
-./nrf52_sdk/components/libraries/button/app_button.c \
-./nrf52_sdk/components/libraries/util/app_error.c \
-./nrf52_sdk/components/libraries/util/nrf_assert.c \
-./nrf52_sdk/components/libraries/fifo/app_fifo.c \
-./nrf52_sdk/components/libraries/scheduler/app_scheduler.c \
-./nrf52_sdk/components/libraries/timer/app_timer.c \
-./nrf52_sdk/components/libraries/timer/app_timer_appsh.c \
-./nrf52_sdk/components/libraries/trace/app_trace.c \
-./nrf52_sdk/components/libraries/uart/retarget.c \
-./nrf52_sdk/components/libraries/uart/app_uart_fifo.c \
-./nrf52_sdk/components/drivers_nrf/delay/nrf_delay.c \
-./nrf52_sdk/components/drivers_nrf/common/nrf_drv_common.c \
-./nrf52_sdk/components/drivers_nrf/gpiote/nrf_drv_gpiote.c \
-./nrf52_sdk/components/drivers_nrf/uart/nrf_drv_uart.c \
-./nrf52_sdk/components/drivers_nrf/pstorage/pstorage.c \
-./nrf52_sdk/components/drivers_nrf/spi_master/nrf_drv_spi.c \
-./nrf52_sdk/components/ble/ble_advertising/ble_advertising.c \
-./nrf52_sdk/components/ble/ble_db_discovery/ble_db_discovery.c \
-./nrf52_sdk/components/ble/common/ble_advdata.c \
-./nrf52_sdk/components/ble/common/ble_conn_params.c \
-./nrf52_sdk/components/ble/common/ble_srv_common.c \
-./nrf52_sdk/components/ble/device_manager/device_manager_peripheral.c \
-./nrf52_sdk/components/softdevice/common/softdevice_handler/softdevice_handler.c \
-./nrf52_sdk/components/toolchain/system_nrf52.c \
-./src/main.c \
-./src/ble_pixwatch_c.c \
-./src/display.c \
+$(NRF_SOURCES) \
+$(ESPRUINO_SOURCES) \
+$(ESPRUINO_WRAPPER_SOURCES) \
+$(SOURCES)
 
 #assembly files common to all targets
-ASM_SOURCE_FILES  = ./nrf52_sdk/components/toolchain/gcc/gcc_startup_nrf52.s
+ASM_SOURCE_FILES  = nrf52_sdk/components/toolchain/gcc/gcc_startup_nrf52.s
 
 #includes common to all targets
-INC_PATHS  = -I./config
-INC_PATHS += -I./nrf52_sdk/components/libraries/scheduler
-INC_PATHS += -I./nrf52_sdk/components/drivers_nrf/config
-INC_PATHS += -I./nrf52_sdk/components/libraries/fifo
-INC_PATHS += -I./nrf52_sdk/components/drivers_nrf/delay
-INC_PATHS += -I./nrf52_sdk/components/softdevice/s132/headers/nrf52
-INC_PATHS += -I./nrf52_sdk/components/libraries/util
-INC_PATHS += -I./nrf52_sdk/components/drivers_nrf/pstorage
-INC_PATHS += -I./nrf52_sdk/components/drivers_nrf/uart
-INC_PATHS += -I./nrf52_sdk/components/ble/common
-INC_PATHS += -I./nrf52_sdk/components/ble/device_manager
-INC_PATHS += -I./nrf52_sdk/components/libraries/uart
-INC_PATHS += -I./nrf52_sdk/components/device
-INC_PATHS += -I./nrf52_sdk/components/ble/ble_db_discovery
-INC_PATHS += -I./nrf52_sdk/components/libraries/button
-INC_PATHS += -I./nrf52_sdk/components/libraries/timer
-INC_PATHS += -I./nrf52_sdk/components/softdevice/s132/headers
-INC_PATHS += -I./nrf52_sdk/components/drivers_nrf/gpiote
-INC_PATHS += -I./nrf52_sdk/components/drivers_nrf/hal
-INC_PATHS += -I./nrf52_sdk/components/toolchain/gcc
-INC_PATHS += -I./nrf52_sdk/components/toolchain
-INC_PATHS += -I./nrf52_sdk/components/drivers_nrf/common
-INC_PATHS += -I./nrf52_sdk/components/drivers_nrf/spi_master
-INC_PATHS += -I./nrf52_sdk/components/ble/ble_advertising
-INC_PATHS += -I./nrf52_sdk/components/libraries/trace
-INC_PATHS += -I./nrf52_sdk/components/softdevice/common/softdevice_handler
-INC_PATHS += -I./src
+INC_PATHS  = -Iconfig
+INC_PATHS += -Inrf52_sdk/components/libraries/scheduler
+INC_PATHS += -Inrf52_sdk/components/drivers_nrf/config
+INC_PATHS += -Inrf52_sdk/components/libraries/fifo
+INC_PATHS += -Inrf52_sdk/components/drivers_nrf/delay
+INC_PATHS += -Inrf52_sdk/components/softdevice/s132/headers/nrf52
+INC_PATHS += -Inrf52_sdk/components/libraries/util
+INC_PATHS += -Inrf52_sdk/components/drivers_nrf/pstorage
+INC_PATHS += -Inrf52_sdk/components/drivers_nrf/uart
+INC_PATHS += -Inrf52_sdk/components/ble/common
+INC_PATHS += -Inrf52_sdk/components/ble/device_manager
+INC_PATHS += -Inrf52_sdk/components/libraries/uart
+INC_PATHS += -Inrf52_sdk/components/device
+INC_PATHS += -Inrf52_sdk/components/ble/ble_db_discovery
+INC_PATHS += -Inrf52_sdk/components/libraries/button
+INC_PATHS += -Inrf52_sdk/components/libraries/timer
+INC_PATHS += -Inrf52_sdk/components/softdevice/s132/headers
+INC_PATHS += -Inrf52_sdk/components/drivers_nrf/gpiote
+INC_PATHS += -Inrf52_sdk/components/drivers_nrf/hal
+INC_PATHS += -Inrf52_sdk/components/toolchain/gcc
+INC_PATHS += -Inrf52_sdk/components/toolchain
+INC_PATHS += -Inrf52_sdk/components/drivers_nrf/common
+INC_PATHS += -Inrf52_sdk/components/drivers_nrf/spi_master
+INC_PATHS += -Inrf52_sdk/components/ble/ble_advertising
+INC_PATHS += -Inrf52_sdk/components/libraries/trace
+INC_PATHS += -Inrf52_sdk/components/softdevice/common/softdevice_handler
+INC_PATHS += -Isrc
+INC_PATHS += -Iespruino/src
+INC_PATHS += -Iespruino/gen
+INC_PATHS += -Iespruino/targets/nrf5x
+INC_PATHS += -Iespruino/libs/math
 
 
 OBJECT_DIRECTORY = _build
@@ -105,6 +159,14 @@ OUTPUT_BINARY_DIRECTORY = $(OBJECT_DIRECTORY)
 # Sorting removes duplicates
 BUILD_DIRECTORIES := $(sort $(OBJECT_DIRECTORY) $(OUTPUT_BINARY_DIRECTORY) $(LISTING_DIRECTORY) )
 
+# Optimize flags
+OPTIMIZE_FLAGS += -fno-common -fno-exceptions -fdata-sections -ffunction-sections
+# Enable link-time optimisations (inlining across files)
+OPTIMIZE_FLAGS += -flto -fno-fat-lto-objects -Wl,--allow-multiple-definition
+# Limit code size growth via inlining to 8% Normally 30% it seems... This reduces code size while still being able to use -O3
+OPTIMIZE_FLAGS += --param inline-unit-growth=6
+
+
 #flags common to all targets
 CFLAGS  = -DSWI_DISABLE0
 CFLAGS += -DSOFTDEVICE_PRESENT
@@ -112,15 +174,17 @@ CFLAGS += -DNRF52
 CFLAGS += -DCONFIG_GPIO_AS_PINRESET
 CFLAGS += -DS132
 CFLAGS += -DBLE_STACK_SUPPORT_REQD
+CFLAGS += -DLINK_TIME_OPTIMISATION
 CFLAGS += -mcpu=cortex-m4
 CFLAGS += -mthumb -mabi=aapcs --std=gnu99
-CFLAGS += -Wall -Werror -O3
+CFLAGS += -Wall -Werror -O3 -Werror=implicit-function-declaration
 CFLAGS += -mfloat-abi=hard -mfpu=fpv4-sp-d16
 # keep every function in separate section. This will allow linker to dump unused functions
-CFLAGS += -ffunction-sections -fdata-sections -fno-strict-aliasing
+CFLAGS += $(OPTIMIZE_FLAGS) -fno-strict-aliasing
 CFLAGS += -fno-builtin --short-enums
 
 # keep every function in separate section. This will allow linker to dump unused functions
+LDFLAGS += -Winline
 LDFLAGS += -Xlinker -Map=$(LISTING_DIRECTORY)/$(OUTPUT_FILENAME).map
 LDFLAGS += -mthumb -mabi=aapcs -L $(TEMPLATE_PATH) -T$(LINKER_SCRIPT)
 LDFLAGS += -mcpu=cortex-m4
@@ -167,7 +231,7 @@ vpath %.s $(ASM_PATHS)
 OBJECTS = $(C_OBJECTS) $(ASM_OBJECTS)
 
 nrf52832_xxaa_s132: OUTPUT_FILENAME := pixwatch
-nrf52832_xxaa_s132: LINKER_SCRIPT=./ldscripts/pixwatch.ld
+nrf52832_xxaa_s132: LINKER_SCRIPT=ldscripts/pixwatch.ld
 nrf52832_xxaa_s132: $(BUILD_DIRECTORIES) $(OBJECTS)
 	@echo Linking target: $(OUTPUT_FILENAME).out
 	$(NO_ECHO)$(CC) $(LDFLAGS) $(OBJECTS) $(LIBS) -o $(OUTPUT_BINARY_DIRECTORY)/$(OUTPUT_FILENAME).out

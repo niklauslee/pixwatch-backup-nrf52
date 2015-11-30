@@ -165,14 +165,13 @@ static void uart_error_handle(app_uart_evt_t * p_event)
     {
         APP_ERROR_HANDLER(p_event->data.error_code);
     }
-    /*
     else if (p_event->evt_type == APP_UART_DATA_READY) // There is one byte in the RX FIFO.
     {
     	uint8_t character;
     	while(app_uart_get(&character) != NRF_SUCCESS); // Non blocking.
-    	jshPushIOCharEvent(EV_SERIAL1, (char) character);
+        while(app_uart_put(character) != NRF_SUCCESS); // Non blocking.
+    	// jshPushIOCharEvent(EV_SERIAL1, (char) character);
     }
-    */
 }
 
 static void on_pixwatch_c_evt(ble_pixwatch_c_t * p_pixwatch, ble_pixwatch_c_evt_t * p_evt)
