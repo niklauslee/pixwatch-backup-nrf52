@@ -166,7 +166,6 @@ OPTIMIZE_FLAGS += -flto -fno-fat-lto-objects -Wl,--allow-multiple-definition
 # Limit code size growth via inlining to 8% Normally 30% it seems... This reduces code size while still being able to use -O3
 OPTIMIZE_FLAGS += --param inline-unit-growth=6
 
-
 #flags common to all targets
 CFLAGS  = -DSWI_DISABLE0
 CFLAGS += -DSOFTDEVICE_PRESENT
@@ -176,11 +175,11 @@ CFLAGS += -DS132
 CFLAGS += -DBLE_STACK_SUPPORT_REQD
 CFLAGS += -DLINK_TIME_OPTIMISATION
 CFLAGS += -mcpu=cortex-m4
-CFLAGS += -mthumb -mabi=aapcs --std=gnu99
-CFLAGS += -Wall -Werror -O3 -Werror=implicit-function-declaration
+CFLAGS += -mthumb -mabi=aapcs -std=gnu99
+CFLAGS += -Wall -O3 -Werror=implicit-function-declaration
 CFLAGS += -mfloat-abi=hard -mfpu=fpv4-sp-d16
 # keep every function in separate section. This will allow linker to dump unused functions
-CFLAGS += $(OPTIMIZE_FLAGS) -fno-strict-aliasing
+CFLAGS += $(OPTIMIZE_FLAGS) -fno-strict-aliasing -fgnu89-inline
 CFLAGS += -fno-builtin --short-enums
 
 # keep every function in separate section. This will allow linker to dump unused functions
