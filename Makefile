@@ -61,6 +61,7 @@ C_SOURCE_FILES += \
 ./nrf52_sdk/components/ble/device_manager/device_manager_peripheral.c \
 ./nrf52_sdk/components/softdevice/common/softdevice_handler/softdevice_handler.c \
 ./nrf52_sdk/components/toolchain/system_nrf52.c \
+./duktape/duktape.c \
 ./src/main.c \
 ./src/ble_pixwatch_c.c \
 ./src/display.c \
@@ -95,12 +96,14 @@ INC_PATHS += -I./nrf52_sdk/components/drivers_nrf/spi_master
 INC_PATHS += -I./nrf52_sdk/components/ble/ble_advertising
 INC_PATHS += -I./nrf52_sdk/components/libraries/trace
 INC_PATHS += -I./nrf52_sdk/components/softdevice/common/softdevice_handler
+INC_PATHS += -I./duktape
 INC_PATHS += -I./src
-
 
 OBJECT_DIRECTORY = _build
 LISTING_DIRECTORY = $(OBJECT_DIRECTORY)
 OUTPUT_BINARY_DIRECTORY = $(OBJECT_DIRECTORY)
+
+LIBS += $(GNU_INSTALL_ROOT)/arm-none-eabi/lib/fpu/libm.a
 
 # Sorting removes duplicates
 BUILD_DIRECTORIES := $(sort $(OBJECT_DIRECTORY) $(OUTPUT_BINARY_DIRECTORY) $(LISTING_DIRECTORY) )
@@ -112,13 +115,14 @@ CFLAGS += -DNRF52
 CFLAGS += -DCONFIG_GPIO_AS_PINRESET
 CFLAGS += -DS132
 CFLAGS += -DBLE_STACK_SUPPORT_REQD
+CFLAGS += -D_ARM -DDUK_OPT_DEBUG_BUFSIZE=2048
 CFLAGS += -mcpu=cortex-m4
-CFLAGS += -mthumb -mabi=aapcs --std=gnu99
-CFLAGS += -Wall -Werror -O3
+CFLAGS += -mthumb -mabi=aapcs -std=gnu99
+CFLAGS += -Wall -Os -lm
 CFLAGS += -mfloat-abi=hard -mfpu=fpv4-sp-d16
 # keep every function in separate section. This will allow linker to dump unused functions
 CFLAGS += -ffunction-sections -fdata-sections -fno-strict-aliasing
-CFLAGS += -fno-builtin --short-enums
+CFLAGS += -fno-builtin -fomit-frame-pointer --short-enums
 
 # keep every function in separate section. This will allow linker to dump unused functions
 LDFLAGS += -Xlinker -Map=$(LISTING_DIRECTORY)/$(OUTPUT_FILENAME).map
@@ -128,7 +132,7 @@ LDFLAGS += -mfloat-abi=hard -mfpu=fpv4-sp-d16
 # let linker to dump unused sections
 LDFLAGS += -Wl,--gc-sections
 # use newlib in nano version
-LDFLAGS += --specs=nano.specs -lc -lnosys
+LDFLAGS += --specs=nano.specs -lc -lm -lnosys
 
 # Assembler flags
 ASMFLAGS += -x assembler-with-cpp
@@ -218,7 +222,7 @@ genhex:
 
 echosize:
 	-@echo ''
-	$(NO_ECHO)$(SIZE) $(OUTPUT_BINARY_DIRECTORY)/$(OUTPUT_FILENAME).out
+	$(NO_ECHO)$(SIZE) $(OUTPUT_BINARY_DIRECTORY)/$(PROJECT_NAME).out
 	-@echo ''
 
 clean:

@@ -52,6 +52,8 @@
 #include "ble_pixwatch_c.h"
 #include "display.h"
 
+#include "duktape.h"
+
 #define UART_TX_BUF_SIZE                1024         /**< UART TX buffer size. */
 #define UART_RX_BUF_SIZE                32           /**< UART RX buffer size. */
 
@@ -803,6 +805,11 @@ int main(void)
     spi_master_init();
     initDisplay();
     drawRectangle(0, 0, 127, 95, BLACK);
+
+    // duktape
+    // duk_context *ctx = duk_create_heap_default();
+    // duk_eval_string(ctx, "print('Hello world!');");
+    // duk_destroy_heap(ctx);
 
     // Enter main loop
     for (;;)
