@@ -52,6 +52,21 @@
 #include "ble_pixwatch_c.h"
 #include "display.h"
 
+
+#include "jerry.h"
+
+/**
+ * Standalone Jerry exit codes
+ */
+#define JERRY_STANDALONE_EXIT_CODE_OK   (0)
+#define JERRY_STANDALONE_EXIT_CODE_FAIL (1)
+
+#include "jerry-api.h"
+
+static const char generated_source[] = "1+2;";
+
+
+
 #define UART_TX_BUF_SIZE                1024         /**< UART TX buffer size. */
 #define UART_RX_BUF_SIZE                32           /**< UART RX buffer size. */
 
@@ -803,6 +818,23 @@ int main(void)
     spi_master_init();
     initDisplay();
     drawRectangle(0, 0, 127, 95, BLACK);
+
+    // Jerryscript
+    const char *source_p = generated_source;
+    const size_t source_size = sizeof (generated_source);
+
+    jerry_completion_code_t ret_code = jerry_run_simple ((jerry_api_char_t *) source_p, source_size, JERRY_FLAG_EMPTY);
+
+    if (ret_code == JERRY_COMPLETION_CODE_OK)
+    {
+        printf("Jerryscript OK!");
+    }
+    else
+    {
+        printf("Jerryscript Failed!");
+    }
+
+
 
     // Enter main loop
     for (;;)
