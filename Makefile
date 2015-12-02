@@ -62,8 +62,8 @@ espruino/src/jswrap_waveform.c
 
 # Espruino sources
 ESPRUINO_SOURCES += \
-espruino/src/jslex.c \
 espruino/src/jsvar.c \
+espruino/src/jslex.c \
 espruino/src/jsvariterator.c \
 espruino/src/jsutils.c \
 espruino/src/jsnative.c \
@@ -74,6 +74,46 @@ espruino/src/jsdevices.c \
 espruino/src/jstimer.c \
 espruino/src/jsspi.c \
 espruino/gen/jswrapper.c \
+espruino/gen/jspininfo.c \
+espruino/targets/nrf5x/jshardware.c \
+espruino/targets/nrf5x/nrf5x_utils.c \
+espruino/libs/math/jswrap_math.c \
+espruino/libs/math/acosh.c \
+espruino/libs/math/asin.c \
+espruino/libs/math/asinh.c \
+espruino/libs/math/atan.c \
+espruino/libs/math/atanh.c \
+espruino/libs/math/cbrt.c \
+espruino/libs/math/chbevl.c \
+espruino/libs/math/clog.c \
+espruino/libs/math/cmplx.c \
+espruino/libs/math/const.c \
+espruino/libs/math/cosh.c \
+espruino/libs/math/drand.c \
+espruino/libs/math/exp10.c \
+espruino/libs/math/exp2.c \
+espruino/libs/math/exp.c \
+espruino/libs/math/fabs.c \
+espruino/libs/math/floor.c \
+espruino/libs/math/isnan.c \
+espruino/libs/math/log10.c \
+espruino/libs/math/log2.c \
+espruino/libs/math/log.c \
+espruino/libs/math/mtherr.c \
+espruino/libs/math/polevl.c \
+espruino/libs/math/pow.c \
+espruino/libs/math/powi.c \
+espruino/libs/math/round.c \
+espruino/libs/math/setprec.c \
+espruino/libs/math/sin.c \
+espruino/libs/math/sincos.c \
+espruino/libs/math/sindg.c \
+espruino/libs/math/sinh.c \
+espruino/libs/math/sqrt.c \
+espruino/libs/math/tan.c \
+espruino/libs/math/tandg.c \
+espruino/libs/math/tanh.c \
+espruino/libs/math/unity.c \
 
 # NRF52 sdk sources
 NRF_SOURCES += \
@@ -151,6 +191,7 @@ INC_PATHS += -Iespruino/gen
 INC_PATHS += -Iespruino/targets/nrf5x
 INC_PATHS += -Iespruino/libs/math
 
+LIBS += $(GNU_INSTALL_ROOT)/arm-none-eabi/lib/fpu/libm.a
 
 OBJECT_DIRECTORY = _build
 LISTING_DIRECTORY = $(OBJECT_DIRECTORY)
@@ -175,11 +216,11 @@ CFLAGS += -DS132
 CFLAGS += -DBLE_STACK_SUPPORT_REQD
 CFLAGS += -DLINK_TIME_OPTIMISATION
 CFLAGS += -mcpu=cortex-m4
-CFLAGS += -mthumb -mabi=aapcs -std=gnu99
+CFLAGS += -mthumb -mabi=aapcs -std=gnu99 -lm
 CFLAGS += -Wall -O3 -Werror=implicit-function-declaration
 CFLAGS += -mfloat-abi=hard -mfpu=fpv4-sp-d16
 # keep every function in separate section. This will allow linker to dump unused functions
-CFLAGS += $(OPTIMIZE_FLAGS) -fno-strict-aliasing -fgnu89-inline
+CFLAGS += $(OPTIMIZE_FLAGS) -fno-strict-aliasing
 CFLAGS += -fno-builtin --short-enums
 
 # keep every function in separate section. This will allow linker to dump unused functions
@@ -191,7 +232,7 @@ LDFLAGS += -mfloat-abi=hard -mfpu=fpv4-sp-d16
 # let linker to dump unused sections
 LDFLAGS += -Wl,--gc-sections
 # use newlib in nano version
-LDFLAGS += --specs=nano.specs -lc -lnosys
+LDFLAGS += --specs=nano.specs -lc -lm -lnosys
 
 # Assembler flags
 ASMFLAGS += -x assembler-with-cpp

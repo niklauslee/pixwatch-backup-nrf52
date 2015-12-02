@@ -52,6 +52,11 @@
 #include "ble_pixwatch_c.h"
 #include "display.h"
 
+#include "platform_config.h"
+#include "jsinteractive.h"
+#include "jshardware.h"
+
+
 #define UART_TX_BUF_SIZE                1024         /**< UART TX buffer size. */
 #define UART_RX_BUF_SIZE                32           /**< UART RX buffer size. */
 
@@ -802,6 +807,12 @@ int main(void)
     spi_master_init();
     initDisplay();
     drawRectangle(0, 0, 127, 95, BLACK);
+
+    // espruino
+    jshInit();
+    jsvInit();
+    jsiInit(false);
+    
 
     // Enter main loop
     for (;;)
