@@ -1,4 +1,5 @@
 _build/**
+stm32f4/_build/**
 
 # Object files
 *.o
