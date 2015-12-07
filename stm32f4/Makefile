@@ -18,9 +18,7 @@ drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_dma.c \
 drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_dma_ex.c \
 drivers/CMSIS/Device/ST/STM32F4xx/Source/Templates/system_stm32f4xx.c \
 src/main.c \
-src/syscalls.c \
 src/stm32f4xx_it.c \
-src/stm32f4xx_hal_msp.c \
 src/startup_stm32f446xx.s \
 
 CC=arm-none-eabi-gcc
@@ -37,7 +35,7 @@ CFLAGS += -mthumb -mcpu=cortex-m4
 CFLAGS += -mfloat-abi=hard -mfpu=fpv4-sp-d16
 
 # TODO: hard float was causing an exception; see what's up.
-LDFLAGS  = -specs=nosys.specs -specs=nano.specs
+LDFLAGS  = -specs=rdimon.specs -lc -lrdimon
 LDFLAGS += -Wl,-Map,$(OBJDIR)/$(PROJ_NAME).map -g -Tldscripts/STM32F446RETx_FLASH.ld
 
 INC_PATHS += -Idrivers/BSP/STM32F4xx-Nucleo
