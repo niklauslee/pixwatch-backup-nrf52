@@ -39,9 +39,10 @@
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f4xx_hal.h"
 #include "stm32f4xx_nucleo.h"
-#include "stdio.h"
-
 #include <stdio.h>
+
+#include "duk_config.h"
+#include "duktape.h"
 
 /** @addtogroup STM32F4xx_HAL_Examples
   * @{
@@ -98,10 +99,14 @@ int main(void)
   // Send a greeting to the trace device (skipped on Release).
   printf("Hello ARM World!\r\n");
 
-  // At this stage the system clock should have already been configured
-  // at high speed.
-  // trace_printf("System clock: %u Hz\n", SystemCoreClock);
 
+  // duktape
+  duk_context *ctx = duk_create_heap_default();
+  duk_eval_string(ctx, "print('Hello world!');");
+  duk_destroy_heap(ctx);
+
+
+  printf("\r\nDone!\r\n");
   /*##-3- Toggle PA05 IO in an infinite loop #################################*/  
   while (1)
   {
@@ -109,8 +114,6 @@ int main(void)
     
     /* Insert a 100ms delay */
     HAL_Delay(100);
-
-    printf("blink\r\n");
   }
 }
 
